@@ -4,26 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AfroBench</title>
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <h1>AfroBench: Benchmarking LLMs for African Languages</h1>
-        <p>Authors: Jessica Ojo, Odunayo Ogundepo, Akintunde Oladipo, Kelechi Ogueji, et al.</p>
-    </header>
-
-    <nav>
-        <ul>
-            <li><a href="leaderboard.html">Leaderboard</a></li>
-            <li><a href="codebase.html">Codebase</a></li>
-            <li><a href="data.html">Data</a></li>
-            <li><a href="https://arxiv.org/abs/YOUR_PAPER_LINK">Read Paper</a></li>
+<body class="bg-gray-900 text-white font-sans">
+    
+    <!-- Navigation Bar -->
+    <nav class="flex justify-between items-center p-6 bg-gray-800 shadow-md">
+        <h1 class="text-2xl font-bold">AfroBench</h1>
+        <ul class="flex space-x-6">
+            <li><a href="leaderboard.html" class="hover:text-yellow-400">Leaderboard</a></li>
+            <li><a href="codebase.html" class="hover:text-yellow-400">Codebase</a></li>
+            <li><a href="data.html" class="hover:text-yellow-400">Data</a></li>
+            <li><a href="https://arxiv.org/abs/YOUR_PAPER_LINK" class="hover:text-yellow-400">Paper</a></li>
         </ul>
     </nav>
-
-    <section>
-        <h2>What is AfroBench?</h2>
-        <p>AfroBench is a comprehensive benchmark for evaluating LLMs across 64 African languages and 15 tasks.</p>
+    
+    <!-- Hero Section -->
+    <header class="text-center mt-16">
+        <h1 class="text-5xl font-extrabold">Benchmarking LLMs for African Languages</h1>
+        <p class="mt-4 text-gray-400 text-lg">Evaluating 64 African languages across 15 NLP tasks.</p>
+    </header>
+    
+    <!-- Overview Section -->
+    <section class="mt-12 max-w-4xl mx-auto text-center">
+        <p class="text-lg">AfroBench is a comprehensive leaderboard for evaluating large language models (LLMs) on African languages, covering translation, question answering, text classification, and more.</p>
     </section>
+    
+    <!-- Key Highlights -->
+    <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-center">
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold">64 Languages</h2>
+            <p class="text-gray-400 mt-2">Evaluating diverse African languages for NLP fairness.</p>
+        </div>
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold">15 Tasks</h2>
+            <p class="text-gray-400 mt-2">From machine translation to sentiment analysis.</p>
+        </div>
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold">Open & Fair</h2>
+            <p class="text-gray-400 mt-2">Built with lm-eval-harness for transparent benchmarking.</p>
+        </div>
+    </section>
+    
+    <!-- Call to Action -->
+    <section class="text-center mt-12">
+        <a href="leaderboard.html" class="px-6 py-3 bg-yellow-500 rounded-full text-lg font-bold shadow-md hover:bg-yellow-400">View Leaderboard</a>
+        <a href="https://github.com/YOUR_GITHUB/afrobench" class="ml-4 px-6 py-3 bg-blue-500 rounded-full text-lg font-bold shadow-md hover:bg-blue-400">GitHub Repo</a>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="text-center mt-12 py-6 text-gray-500 text-sm">© 2025 AfroBench - Evaluating AI for African Languages</footer>
+    
 </body>
 </html>
