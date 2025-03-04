@@ -2,11 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AfroBench LeaderBoard</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfroBench Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Data</h1>
-    <p>xxx</p>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+    <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+        <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">AfroBench Leaderboard</h2>
+        
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-4 mb-6 justify-center">
+            <select id="taskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateSubtasks()">
+                <option value="all">All Tasks</option>
+            </select>
+
+            <select id="subtaskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateDatasets()">
+                <option value="all">All Subtasks</option>
+            </select>
+
+            <select id="datasetFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateLeaderboard()">
+                <option value="all">All Datasets</option>
+            </select>
+
+            <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateLeaderboard()">
+                <option value="all">All Models</option>
+            </select>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+                <thead id="leaderboardHeader">
+                    <tr class="bg-yellow-500 text-white text-lg">
+                        <th class="border p-3">Model</th>
+                        <th class="border p-3">Parameters (B)</th>
+                        <th id="scoreHeader" class="border p-3">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let leaderboardData = {};
+        let taskMapping = {};
+
+        async function fetchData() {
+            const response = await fetch("leaderboard_data.json");
+            leaderboardData = await response.json();
+            populateTasks();
+            updateLeaderboard();
+        }
+
+        function populateTasks() {
+            const taskSelect = document.getElementById("taskFilter");
+            taskMapping = Object.keys(leaderboardData);
+
+            taskMapping.forEach(task => {
+                taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
+            });
+        }
+
+        function updateSubtasks() {
+            const selectedTask = document.getElementById("taskFilter").value;
+            const subtaskSelect = document.getElementById("subtaskFilter");
+            subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
+
+            if (selectedTask !== "all") {
+                const subtasks = Object.keys(leaderboardData[selectedTask].subtasks);
+                subtasks.forEach(subtask => {
+                    subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
+                });
+            }
+
+            updateDatasets();
+        }
+
+        function updateDatasets() {
+            const selectedTask = document.getElementById("taskFilter").value;
+            const selectedSubtask = document.getElementById("subtaskFilter").value;
+            const datasetSelect = document.getElementById("datasetFilter");
+            datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
+
+            if (selectedTask !== "all" && selectedSubtask !== "all") {
+                const datasets = Object.keys(leaderboardData[selectedTask].subtasks[selectedSubtask].datasets);
+                datasets.forEach(dataset => {
+                    datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
+                });
+            }
+
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            const selectedTask = document.getElementById("taskFilter").value;
+            const selectedSubtask = document.getElementById("subtaskFilter").value;
+            const selectedDataset = document.getElementById("datasetFilter").value;
+            const selectedModel = document.getElementById("modelFilter").value;
+
+            const tableBody = document.getElementById("leaderboardBody");
+            const tableHeader = document.getElementById("leaderboardHeader");
+            tableBody.innerHTML = "";
+
+            if (selectedTask === "all") return;
+
+            let subtaskData = leaderboardData[selectedTask].subtasks;
+            if (selectedSubtask !== "all") subtaskData = { [selectedSubtask]: subtaskData[selectedSubtask] };
+
+            let models = new Set();
+            Object.values(subtaskData).forEach(subtask => {
+                Object.keys(subtask.datasets).forEach(dataset => {
+                    if (selectedDataset !== "all" && dataset !== selectedDataset) return;
+                    Object.keys(subtask.datasets[dataset].scores).forEach(model => models.add(model));
+                });
+            });
+
+            models.forEach(model => {
+                if (selectedModel !== "all" && model !== selectedModel) return;
+
+                let modelRow = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
+                    <td class="border p-3 font-medium text-gray-900">${model}</td>
+                    <td class="border p-3 text-gray-800">-</td>`;
+
+                if (selectedDataset === "all") {
+                    let totalScore = 0;
+                    let count = 0;
+
+                    Object.values(subtaskData).forEach(subtask => {
+                        Object.keys(subtask.datasets).forEach(dataset => {
+                            if (subtask.datasets[dataset].scores[model]) {
+                                let avgScore = subtask.datasets[dataset].scores[model].reduce((a, b) => a + b, 0) / subtask.datasets[dataset].scores[model].length;
+                                totalScore += avgScore;
+                                count++;
+                            }
+                        });
+                    });
+
+                    modelRow += `<td class="border p-3 text-center">${(count > 0 ? (totalScore / count).toFixed(1) : "-")}</td>`;
+                } else {
+                    let datasetScores = subtaskData[selectedSubtask].datasets[selectedDataset].scores[model];
+                    datasetScores.forEach(score => {
+                        modelRow += `<td class="border p-3 text-center">${score.toFixed(1)}</td>`;
+                    });
+                }
+
+                modelRow += `</tr>`;
+                tableBody.innerHTML += modelRow;
+            });
+        }
+
+        fetchData();
+    </script>
 </body>
 </html>
