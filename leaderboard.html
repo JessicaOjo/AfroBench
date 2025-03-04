@@ -51,6 +51,101 @@
     </div>
 
     <script>
+        // Dataset-to-Task Mapping
+        const DATASET_MAPPING = {
+            "MasakhaPOS": ["NLU", "TokC"],
+            "MasakhaNER": ["NLU", "TokC"],
+            "AfriSenti": ["NLU", "Senti"],
+            "NollySenti": ["NLU", "Senti"],
+            "InjongoIntent": ["NLU", "Intent"],
+            "MasakhaNEWS": ["NLU", "Topic"],
+            "SIB": ["NLU", "Topic"],
+            "AfriHate": ["NLU", "Hate"],
+            "AfriXNLI": ["NLU", "NLI"],
+            "AfriQA": ["QA", "XQA"],
+            "Belebele": ["QA", "RC"],
+            "NaijaRC": ["QA", "RC"],
+            "UHURA": ["Knowledge", "Arc-E"],
+            "OpenAIMMLU": ["Knowledge", "MMLU"],
+            "AfriMMLU": ["Knowledge", "MMLU"],
+            "AfriMGSM": ["Reasoning", "Math"],
+            "SALT - en_xx": ["NLG", "MT"],
+            "SALT - xx_en": ["NLG", "MT"],
+            "Flores - en_xx": ["NLG", "MT"],
+            "Flores - xx_en": ["NLG", "MT"],
+            "MAFAND - en_xx": ["NLG", "MT"],
+            "MAFAND - xx_en": ["NLG", "MT"],
+            "NTREX - en_xx": ["NLG", "MT"],
+            "NTREX - xx_en": ["NLG", "MT"],
+            "XLSUM": ["NLG", "Summ"],
+            "ADR": ["NLG", "Diacritics"]
+        };
+    
+        // Extract unique tasks
+        const TASKS = [...new Set(Object.values(DATASET_MAPPING).map(([task]) => task))];
+    
+        function populateTasks() {
+            const taskSelect = document.getElementById("taskFilter");
+            taskSelect.innerHTML = `<option value="all">All Tasks</option>`;
+    
+            TASKS.forEach(task => {
+                taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
+            });
+        }
+    
+        function updateSubtasks() {
+            const selectedTask = document.getElementById("taskFilter").value;
+            const subtaskSelect = document.getElementById("subtaskFilter");
+            subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
+    
+            if (selectedTask === "all") return;
+    
+            // Get unique subtasks for selected task
+            const subtasks = [...new Set(
+                Object.values(DATASET_MAPPING)
+                    .filter(([task]) => task === selectedTask)
+                    .map(([, subtask]) => subtask)
+            )];
+    
+            subtasks.forEach(subtask => {
+                subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
+            });
+    
+            updateDatasets();
+        }
+    
+        function updateDatasets() {
+            const selectedTask = document.getElementById("taskFilter").value;
+            const selectedSubtask = document.getElementById("subtaskFilter").value;
+            const datasetSelect = document.getElementById("datasetFilter");
+            datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
+    
+            if (selectedTask === "all" || selectedSubtask === "all") return;
+    
+            // Get datasets for selected task & subtask
+            const datasets = Object.keys(DATASET_MAPPING)
+                .filter(dataset => 
+                    DATASET_MAPPING[dataset][0] === selectedTask && 
+                    DATASET_MAPPING[dataset][1] === selectedSubtask
+                );
+    
+            datasets.forEach(dataset => {
+                datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
+            });
+    
+            updateLeaderboard();
+        }
+    
+        function updateLeaderboard() {
+            console.log("Filtering leaderboard with selected options");
+            // This function should be implemented to filter and display the leaderboard.
+        }
+    
+        // Populate initial task dropdown
+        populateTasks();
+    </script>
+
+    <!-- <script>
         let leaderboardData = {};
         let taskMapping = {};
 
@@ -159,6 +254,6 @@
         }
 
         fetchData();
-    </script>
+    </script> -->
 </body>
 </html>
