@@ -11,21 +11,58 @@
     <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
         <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">AfroBench Leaderboard</h2>
         
-        <!-- Filters -->
+        <!-- Filters Section -->
         <div class="flex flex-wrap gap-4 mb-6 justify-center">
-            <select id="taskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateSubtasks()">
-                <option value="all">All Tasks</option>
-            </select>
+            <!-- Task Filter -->
+            <div class="relative">
+                <button onclick="toggleDropdown('taskDropdown')" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56 flex justify-between">
+                    <span id="taskSelectedText">All Tasks</span>
+                    <span>▼</span>
+                </button>
+                <div id="taskDropdown" class="absolute hidden bg-white border rounded-lg shadow-lg w-56 mt-2 z-10">
+                    <label class="block px-4 py-2">
+                        <input type="checkbox" value="all" onclick="selectAll(this, 'taskOptions', 'taskSelectedText')"> All Tasks
+                    </label>
+                    <div id="taskOptions" class="max-h-40 overflow-y-auto">
+                        <!-- Populated via JavaScript -->
+                    </div>
+                </div>
+            </div>
 
-            <select id="subtaskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateDatasets()">
-                <option value="all">All Subtasks</option>
-            </select>
+            <!-- Subtask Filter -->
+            <div class="relative">
+                <button onclick="toggleDropdown('subtaskDropdown')" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56 flex justify-between">
+                    <span id="subtaskSelectedText">All Subtasks</span>
+                    <span>▼</span>
+                </button>
+                <div id="subtaskDropdown" class="absolute hidden bg-white border rounded-lg shadow-lg w-56 mt-2 z-10">
+                    <label class="block px-4 py-2">
+                        <input type="checkbox" value="all" onclick="selectAll(this, 'subtaskOptions', 'subtaskSelectedText')"> All Subtasks
+                    </label>
+                    <div id="subtaskOptions" class="max-h-40 overflow-y-auto">
+                        <!-- Populated via JavaScript -->
+                    </div>
+                </div>
+            </div>
 
-            <select id="datasetFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateLeaderboard()">
-                <option value="all">All Datasets</option>
-            </select>
+            <!-- Dataset Filter -->
+            <div class="relative">
+                <button onclick="toggleDropdown('datasetDropdown')" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56 flex justify-between">
+                    <span id="datasetSelectedText">All Datasets</span>
+                    <span>▼</span>
+                </button>
+                <div id="datasetDropdown" class="absolute hidden bg-white border rounded-lg shadow-lg w-56 mt-2 z-10">
+                    <label class="block px-4 py-2">
+                        <input type="checkbox" value="all" onclick="selectAll(this, 'datasetOptions', 'datasetSelectedText')"> All Datasets
+                    </label>
+                    <div id="datasetOptions" class="max-h-40 overflow-y-auto">
+                        <!-- Populated via JavaScript -->
+                    </div>
+                </div>
+            </div>
 
-            <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900" onchange="updateLeaderboard()">
+            <!-- Model Filter -->
+            <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" onchange="updateLeaderboard()">
                 <option value="all">All Models</option>
             </select>
         </div>
@@ -84,83 +121,111 @@
         // Extract unique tasks
         const TASKS = [...new Set(Object.values(DATASET_MAPPING).map(([task]) => task))];
 
-        function populateTasks() {
-            const taskSelect = document.getElementById("taskFilter");
-            taskSelect.innerHTML = `<option value="all">All Tasks</option>`;
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle("hidden");
+        }
 
-            TASKS.forEach(task => {
-                taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(event) {
+            document.querySelectorAll(".absolute").forEach(dropdown => {
+                if (!dropdown.parentElement.contains(event.target)) {
+                    dropdown.classList.add("hidden");
+                }
             });
+        });
 
-            taskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
+        // Function to handle selecting/deselecting all checkboxes
+        function selectAll(mainCheckbox, optionContainerId, selectedTextId) {
+            const checkboxes = document.querySelectorAll(`#${optionContainerId} input[type="checkbox"]`);
+            checkboxes.forEach(cb => cb.checked = mainCheckbox.checked);
+            updateSelectedText(optionContainerId, selectedTextId);
+        }
+
+        // Function to update the displayed selected values
+        function updateSelectedText(optionContainerId, selectedTextId) {
+            const selectedValues = getSelectedOptions(optionContainerId);
+            document.getElementById(selectedTextId).innerText = selectedValues.length ? selectedValues.join(", ") : "All";
+            updateLeaderboard();
+        }
+
+        // Function to populate dropdown options dynamically
+        function populateDropdownOptions(id, options) {
+            const container = document.getElementById(id);
+            container.innerHTML = "";
+            options.forEach(option => {
+                container.innerHTML += `
+                    <label class="block px-4 py-2">
+                        <input type="checkbox" value="${option}" onclick="updateSelectedText('${id}', '${id.replace('Options', 'SelectedText')}')"> ${option}
+                    </label>
+                `;
+            });
+        }
+
+        // Function to populate filters dynamically
+        function populateFilters() {
+            populateDropdownOptions("taskOptions", TASKS);
             updateSubtasks();
         }
 
-        function getSelectedOptions(selectElement) {
-            return [...selectElement.options]
-                .filter(option => option.selected && option.value !== "all")
-                .map(option => option.value);
-        }
-
+        // Function to update subtasks based on selected tasks
         function updateSubtasks() {
-            const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
-            const subtaskSelect = document.getElementById("subtaskFilter");
-            subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
+            const selectedTasks = getSelectedOptions("taskOptions");
 
             if (selectedTasks.length === 0) {
-                updateDatasets();
+                document.getElementById("subtaskSelectedText").innerText = "All Subtasks";
+                populateDropdownOptions("subtaskOptions", []);
                 return;
             }
 
-            // Get unique subtasks from selected tasks
             const subtasks = [...new Set(
                 Object.values(DATASET_MAPPING)
                     .filter(([task]) => selectedTasks.includes(task))
                     .map(([, subtask]) => subtask)
             )];
 
-            subtasks.forEach(subtask => {
-                subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
-            });
-
-            subtaskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
+            populateDropdownOptions("subtaskOptions", subtasks);
+            document.getElementById("subtaskSelectedText").innerText = "All Subtasks";
             updateDatasets();
         }
 
+        // Function to update datasets based on selected subtasks
         function updateDatasets() {
-            const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
-            const selectedSubtasks = getSelectedOptions(document.getElementById("subtaskFilter"));
-            const datasetSelect = document.getElementById("datasetFilter");
-            datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
+            const selectedTasks = getSelectedOptions("taskOptions");
+            const selectedSubtasks = getSelectedOptions("subtaskOptions");
 
             if (selectedTasks.length === 0) {
-                updateLeaderboard();
+                document.getElementById("datasetSelectedText").innerText = "All Datasets";
+                populateDropdownOptions("datasetOptions", []);
                 return;
             }
 
-            // Get datasets matching selected tasks & subtasks
             const datasets = Object.keys(DATASET_MAPPING)
-                .filter(dataset => 
+                .filter(dataset =>
                     selectedTasks.includes(DATASET_MAPPING[dataset][0]) &&
                     (selectedSubtasks.length === 0 || selectedSubtasks.includes(DATASET_MAPPING[dataset][1]))
                 );
 
-            datasets.forEach(dataset => {
-                datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
-            });
-
-            datasetSelect.setAttribute("multiple", "multiple"); // Enable multi-select
-            updateLeaderboard();
+            populateDropdownOptions("datasetOptions", datasets);
+            document.getElementById("datasetSelectedText").innerText = "All Datasets";
         }
 
-    
-        function updateLeaderboard() {
-            console.log("Filtering leaderboard with selected options");
-            // This function should be implemented to filter and display the leaderboard.
+        // Get selected options from checkboxes
+        function getSelectedOptions(containerId) {
+            return [...document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)]
+                .map(cb => cb.value)
+                .filter(value => value !== "all"); // Exclude "All" from list
         }
+
+        // Initialize filters
+        populateFilters();
+
+        // function updateLeaderboard() {
+        //     console.log("Filtering leaderboard with selected options");
+        //     // This function should be implemented to filter and display the leaderboard.
+        // }
     
-        // Populate initial task dropdown
-        populateTasks();
+        // // Populate initial task dropdown
+        // populateTasks();
     </script>
 
     <!-- <script>
