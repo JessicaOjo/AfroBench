@@ -12,75 +12,71 @@
         <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">AfroBench Leaderboard</h2>
         
         <!-- Filters Section -->
-        <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">AfroBench Leaderboard</h2>
-
-            <!-- Task Selection -->
-            <div class="flex flex-wrap gap-3 justify-center mb-4">
-                <button class="task-button" data-task="NLU" onclick="toggleTaskSelection(this)">NLU</button>
-                <button class="task-button" data-task="QA" onclick="toggleTaskSelection(this)">QA</button>
-                <button class="task-button" data-task="Knowledge" onclick="toggleTaskSelection(this)">Knowledge</button>
-                <button class="task-button" data-task="Reasoning" onclick="toggleTaskSelection(this)">Reasoning</button>
-                <button class="task-button" data-task="NLG" onclick="toggleTaskSelection(this)">NLG</button>
-            </div>
-
-            <!-- Subtask & Dataset Filters -->
-            <div class="flex flex-wrap gap-4 justify-center">
-                <!-- Subtask Dropdown -->
-                <select id="subtaskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateDatasets()">
-                </select>
-
-                <!-- Dataset Dropdown -->
-                <select id="datasetFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateLeaderboard()">
-                </select>
-
-                <!-- Model Filter -->
-                <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" onchange="updateLeaderboard()">
-                    <option value="all">All Models</option>
-                </select>
-            </div>
+        <!-- Task Selection -->
+        <div class="flex flex-wrap gap-3 justify-center mb-4">
+            <button class="task-button" data-task="NLU" onclick="toggleTaskSelection(this)">NLU</button>
+            <button class="task-button" data-task="QA" onclick="toggleTaskSelection(this)">QA</button>
+            <button class="task-button" data-task="Knowledge" onclick="toggleTaskSelection(this)">Knowledge</button>
+            <button class="task-button" data-task="Reasoning" onclick="toggleTaskSelection(this)">Reasoning</button>
+            <button class="task-button" data-task="NLG" onclick="toggleTaskSelection(this)">NLG</button>
         </div>
 
-        <style>
-            /* Styling for the Task Selection Buttons */
-            .task-button {
-                padding: 10px 16px;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                background-color: white;
-                cursor: pointer;
-                transition: all 0.2s ease-in-out;
-            }
+        <!-- Subtask & Dataset Filters -->
+        <div class="flex flex-wrap gap-4 justify-center">
+            <!-- Subtask Dropdown -->
+            <select id="subtaskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateDatasets()">
+            </select>
 
-            .task-button:hover {
-                background-color: #fcd34d; /* Yellow on hover */
-            }
+            <!-- Dataset Dropdown -->
+            <select id="datasetFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateLeaderboard()">
+            </select>
 
-            .task-button.active {
-                background-color: #f59e0b; /* Selected task */
-                color: white;
-                border-color: #d97706;
-            }
-        </style>
+            <!-- Model Filter -->
+            <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" onchange="updateLeaderboard()">
+                <option value="all">All Models</option>
+            </select>
+        </div>
+    </div>
+
+    <style>
+        /* Styling for the Task Selection Buttons */
+        .task-button {
+            padding: 10px 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .task-button:hover {
+            background-color: #fcd34d; /* Yellow on hover */
+        }
+
+        .task-button.active {
+            background-color: #f59e0b; /* Selected task */
+            color: white;
+            border-color: #d97706;
+        }
+    </style>
 
         <!-- Leaderboard Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
-                <thead id="leaderboardHeader">
-                    <tr class="bg-yellow-500 text-white text-lg">
-                        <th class="border p-3">Model</th>
-                        <th class="border p-3">Size (B)</th>
-                        <th class="border p-3">AfroBench Score</th>
-                        <th class="border p-3">NLU</th>
-                        <th class="border p-3">QA</th>
-                        <th class="border p-3">Knowledge</th>
-                        <th class="border p-3">Reasoning</th>
-                        <th class="border p-3">NLG</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody"></tbody>
-            </table>
-        </div>
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+            <thead id="leaderboardHeader">
+                <tr class="bg-yellow-500 text-white text-lg">
+                    <th class="border p-3">Model</th>
+                    <th class="border p-3">Size (B)</th>
+                    <th class="border p-3">AfroBench Score</th>
+                    <th class="border p-3">NLU</th>
+                    <th class="border p-3">QA</th>
+                    <th class="border p-3">Knowledge</th>
+                    <th class="border p-3">Reasoning</th>
+                    <th class="border p-3">NLG</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody"></tbody>
+        </table>
     </div>
 
     <script>
@@ -173,88 +169,8 @@
 
         // Initialize default state
         updateSubtasks();
-</script>
-    
-        // // Extract unique tasks
-        // const TASKS = [...new Set(Object.values(DATASET_MAPPING).map(([task]) => task))];
-
-        // function populateTasks() {
-        //     const taskSelect = document.getElementById("taskFilter");
-        //     taskSelect.innerHTML = `<option value="all">All Tasks</option>`;
-
-        //     TASKS.forEach(task => {
-        //         taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
-        //     });
-
-        //     taskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
-        //     updateSubtasks();
-        // }
-
-        // function getSelectedOptions(selectElement) {
-        //     return [...selectElement.options]
-        //         .filter(option => option.selected && option.value !== "all")
-        //         .map(option => option.value);
-        // }
-
-        // function updateSubtasks() {
-        //     const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
-        //     const subtaskSelect = document.getElementById("subtaskFilter");
-        //     subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
-
-        //     if (selectedTasks.length === 0) {
-        //         updateDatasets();
-        //         return;
-        //     }
-
-        //     // Get unique subtasks from selected tasks
-        //     const subtasks = [...new Set(
-        //         Object.values(DATASET_MAPPING)
-        //             .filter(([task]) => selectedTasks.includes(task))
-        //             .map(([, subtask]) => subtask)
-        //     )];
-
-        //     subtasks.forEach(subtask => {
-        //         subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
-        //     });
-
-        //     subtaskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
-        //     updateDatasets();
-        // }
-
-        // function updateDatasets() {
-        //     const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
-        //     const selectedSubtasks = getSelectedOptions(document.getElementById("subtaskFilter"));
-        //     const datasetSelect = document.getElementById("datasetFilter");
-        //     datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
-
-        //     if (selectedTasks.length === 0) {
-        //         updateLeaderboard();
-        //         return;
-        //     }
-
-        //     // Get datasets matching selected tasks & subtasks
-        //     const datasets = Object.keys(DATASET_MAPPING)
-        //         .filter(dataset => 
-        //             selectedTasks.includes(DATASET_MAPPING[dataset][0]) &&
-        //             (selectedSubtasks.length === 0 || selectedSubtasks.includes(DATASET_MAPPING[dataset][1]))
-        //         );
-
-        //     datasets.forEach(dataset => {
-        //         datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
-        //     });
-
-        //     datasetSelect.setAttribute("multiple", "multiple"); // Enable multi-select
-        //     updateLeaderboard();
-        // }
-
-    
-        // function updateLeaderboard() {
-        //     console.log("Filtering leaderboard with selected options");
-        //     // This function should be implemented to filter and display the leaderboard.
-        // }
-    
-        // // Populate initial task dropdown
-        // populateTasks();
+    </script>
+ 
     <!-- </script> -->
 
     <!-- <script>
