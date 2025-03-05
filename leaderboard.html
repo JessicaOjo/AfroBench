@@ -125,6 +125,15 @@
             document.getElementById(id).classList.toggle("hidden");
         }
 
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(event) {
+            document.querySelectorAll(".absolute").forEach(dropdown => {
+                if (!dropdown.parentElement.contains(event.target)) {
+                    dropdown.classList.add("hidden");
+                }
+            });
+        });
+
         // Function to handle selecting/deselecting all checkboxes
         function selectAll(mainCheckbox, optionContainerId, selectedTextId) {
             const checkboxes = document.querySelectorAll(`#${optionContainerId} input[type="checkbox"]`);
@@ -134,11 +143,7 @@
 
         // Function to update the displayed selected values
         function updateSelectedText(optionContainerId, selectedTextId) {
-            const selectedValues = [];
-            document.querySelectorAll(`#${optionContainerId} input[type="checkbox"]:checked`).forEach(cb => {
-                if (cb.value !== "all") selectedValues.push(cb.value);
-            });
-
+            const selectedValues = getSelectedOptions(optionContainerId);
             document.getElementById(selectedTextId).innerText = selectedValues.length ? selectedValues.join(", ") : "All";
             updateLeaderboard();
         }
@@ -158,15 +163,20 @@
 
         // Function to populate filters dynamically
         function populateFilters() {
-            const tasks = [...new Set(Object.values(DATASET_MAPPING).map(([task]) => task))];
-            populateDropdownOptions("taskOptions", tasks);
-
+            populateDropdownOptions("taskOptions", TASKS);
             updateSubtasks();
         }
 
         // Function to update subtasks based on selected tasks
         function updateSubtasks() {
             const selectedTasks = getSelectedOptions("taskOptions");
+
+            if (selectedTasks.length === 0) {
+                document.getElementById("subtaskSelectedText").innerText = "All Subtasks";
+                populateDropdownOptions("subtaskOptions", []);
+                return;
+            }
+
             const subtasks = [...new Set(
                 Object.values(DATASET_MAPPING)
                     .filter(([task]) => selectedTasks.includes(task))
@@ -174,6 +184,7 @@
             )];
 
             populateDropdownOptions("subtaskOptions", subtasks);
+            document.getElementById("subtaskSelectedText").innerText = "All Subtasks";
             updateDatasets();
         }
 
@@ -182,6 +193,12 @@
             const selectedTasks = getSelectedOptions("taskOptions");
             const selectedSubtasks = getSelectedOptions("subtaskOptions");
 
+            if (selectedTasks.length === 0) {
+                document.getElementById("datasetSelectedText").innerText = "All Datasets";
+                populateDropdownOptions("datasetOptions", []);
+                return;
+            }
+
             const datasets = Object.keys(DATASET_MAPPING)
                 .filter(dataset =>
                     selectedTasks.includes(DATASET_MAPPING[dataset][0]) &&
@@ -189,18 +206,19 @@
                 );
 
             populateDropdownOptions("datasetOptions", datasets);
+            document.getElementById("datasetSelectedText").innerText = "All Datasets";
         }
 
         // Get selected options from checkboxes
         function getSelectedOptions(containerId) {
             return [...document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)]
-                .map(cb => cb.value);
+                .map(cb => cb.value)
+                .filter(value => value !== "all"); // Exclude "All" from list
         }
 
         // Initialize filters
         populateFilters();
 
-    
         // function updateLeaderboard() {
         //     console.log("Filtering leaderboard with selected options");
         //     // This function should be implemented to filter and display the leaderboard.
