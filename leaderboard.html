@@ -84,67 +84,75 @@
         // Extract unique tasks
         const TASKS = [...new Set(Object.values(DATASET_MAPPING).map(([task]) => task))];
 
-function populateTasks() {
-    const taskSelect = document.getElementById("taskFilter");
-    taskSelect.innerHTML = `<option value="all">All Tasks</option>`;
+        function populateTasks() {
+            const taskSelect = document.getElementById("taskFilter");
+            taskSelect.innerHTML = `<option value="all">All Tasks</option>`;
 
-    TASKS.forEach(task => {
-        taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
-    });
+            TASKS.forEach(task => {
+                taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
+            });
 
-    updateSubtasks(); // Ensure subtasks update on load
-}
+            taskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
+            updateSubtasks();
+        }
 
-function updateSubtasks() {
-    const selectedTask = document.getElementById("taskFilter").value;
-    const subtaskSelect = document.getElementById("subtaskFilter");
-    subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
+        function getSelectedOptions(selectElement) {
+            return [...selectElement.options]
+                .filter(option => option.selected && option.value !== "all")
+                .map(option => option.value);
+        }
 
-    if (selectedTask === "all") {
-        updateDatasets();
-        return;
-    }
+        function updateSubtasks() {
+            const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
+            const subtaskSelect = document.getElementById("subtaskFilter");
+            subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
 
-    // Get unique subtasks for selected task
-    const subtasks = [...new Set(
-        Object.values(DATASET_MAPPING)
-            .filter(([task]) => task === selectedTask)
-            .map(([, subtask]) => subtask)
-    )];
+            if (selectedTasks.length === 0) {
+                updateDatasets();
+                return;
+            }
 
-    subtasks.forEach(subtask => {
-        subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
-    });
+            // Get unique subtasks from selected tasks
+            const subtasks = [...new Set(
+                Object.values(DATASET_MAPPING)
+                    .filter(([task]) => selectedTasks.includes(task))
+                    .map(([, subtask]) => subtask)
+            )];
 
-    subtaskSelect.value = "all"; // Default selection remains "All Subtasks"
-    updateDatasets(); // Ensure datasets update based on new subtask selection
-}
+            subtasks.forEach(subtask => {
+                subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
+            });
 
-function updateDatasets() {
-    const selectedTask = document.getElementById("taskFilter").value;
-    const selectedSubtask = document.getElementById("subtaskFilter").value;
-    const datasetSelect = document.getElementById("datasetFilter");
-    datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
+            subtaskSelect.setAttribute("multiple", "multiple"); // Enable multi-select
+            updateDatasets();
+        }
 
-    if (selectedTask === "all") {
-        updateLeaderboard();
-        return;
-    }
+        function updateDatasets() {
+            const selectedTasks = getSelectedOptions(document.getElementById("taskFilter"));
+            const selectedSubtasks = getSelectedOptions(document.getElementById("subtaskFilter"));
+            const datasetSelect = document.getElementById("datasetFilter");
+            datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
 
-    // Get datasets for selected task & subtask
-    const datasets = Object.keys(DATASET_MAPPING)
-        .filter(dataset => 
-            DATASET_MAPPING[dataset][0] === selectedTask && 
-            (selectedSubtask === "all" || DATASET_MAPPING[dataset][1] === selectedSubtask)
-        );
+            if (selectedTasks.length === 0) {
+                updateLeaderboard();
+                return;
+            }
 
-    datasets.forEach(dataset => {
-        datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
-    });
+            // Get datasets matching selected tasks & subtasks
+            const datasets = Object.keys(DATASET_MAPPING)
+                .filter(dataset => 
+                    selectedTasks.includes(DATASET_MAPPING[dataset][0]) &&
+                    (selectedSubtasks.length === 0 || selectedSubtasks.includes(DATASET_MAPPING[dataset][1]))
+                );
 
-    datasetSelect.value = "all"; // Default selection remains "All Datasets"
-    updateLeaderboard();
-}
+            datasets.forEach(dataset => {
+                datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
+            });
+
+            datasetSelect.setAttribute("multiple", "multiple"); // Enable multi-select
+            updateLeaderboard();
+        }
+
     
         function updateLeaderboard() {
             console.log("Filtering leaderboard with selected options");
