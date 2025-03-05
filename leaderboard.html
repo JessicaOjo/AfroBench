@@ -61,24 +61,24 @@
     </style>
 
         <!-- Leaderboard Table -->
-    <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
-            <thead id="leaderboardHeader">
-                <tr class="bg-yellow-500 text-white text-lg">
-                    <th class="border p-3">Model</th>
-                    <th class="border p-3">Size (B)</th>
-                    <th class="border p-3">AfroBench Score</th>
-                    <th class="border p-3">NLU</th>
-                    <th class="border p-3">QA</th>
-                    <th class="border p-3">Knowledge</th>
-                    <th class="border p-3">Reasoning</th>
-                    <th class="border p-3">NLG</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboardBody"></tbody>
-        </table>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+                <thead id="leaderboardHeader">
+                    <tr class="bg-yellow-500 text-white text-lg">
+                        <th class="border p-3">Model</th>
+                        <th class="border p-3">Size (B)</th>
+                        <th class="border p-3">AfroBench Score</th>
+                        <th class="border p-3">NLU</th>
+                        <th class="border p-3">QA</th>
+                        <th class="border p-3">Knowledge</th>
+                        <th class="border p-3">Reasoning</th>
+                        <th class="border p-3">NLG</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </div>
     </div>
-
     <script>
         // Dataset-to-Task Mapping
         const DATASET_MAPPING = {
