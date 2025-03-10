@@ -62,7 +62,96 @@
                             <th class="border p-3">ADR</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <script>
+                        let leaderboardData = {}; // Store loaded JSON
+                        let selectedDatasets = []; // Track dataset filters
+                    
+                        // Fetch leaderboard data on page load
+                        async function fetchLeaderboardData() {
+                            const response = await fetch("leaderboard.json");
+                            leaderboardData = await response.json();
+                            updateLeaderboard(); // Render table
+                        }
+                    
+                        // Compute per-model scores dynamically
+                        function computeScores() {
+                            let modelScores = {}; 
+                    
+                            Object.keys(leaderboardData).forEach((task) => {
+                                Object.keys(leaderboardData[task]).forEach((subtask) => {
+                                    Object.keys(leaderboardData[task][subtask].datasets).forEach((dataset) => {
+                                        let datasetScores = leaderboardData[task][subtask].datasets[dataset];
+                    
+                                        Object.keys(datasetScores).forEach((model) => {
+                                            if (!modelScores[model]) modelScores[model] = {};
+                                            if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
+                    
+                                            if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
+                                                modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
+                                            }
+                                        });
+                                    });
+                                });
+                            });
+                    
+                            // Compute final per-model averages
+                            let finalScores = [];
+                            Object.keys(modelScores).forEach((model) => {
+                                let subtasks = modelScores[model];
+                                let avgScores = {};
+                    
+                                let totalScore = 0;
+                                let count = 0;
+                    
+                                Object.keys(subtasks).forEach((subtask) => {
+                                    let subtaskAvg = subtasks[subtask].reduce((a, b) => a + b, 0) / subtasks[subtask].length;
+                                    avgScores[subtask] = subtaskAvg.toFixed(1);
+                    
+                                    totalScore += subtaskAvg;
+                                    count++;
+                                });
+                    
+                                let overallScore = count > 0 ? (totalScore / count).toFixed(1) : "N/A";
+                                finalScores.push({ model, overallScore, scores: avgScores });
+                            });
+                    
+                            return finalScores.sort((a, b) => b.overallScore - a.overallScore); // Sort by rank
+                        }
+                    
+                        // Update the table dynamically
+                        function updateLeaderboard() {
+                            const tableBody = document.querySelector("#afrobench-view tbody");
+                            tableBody.innerHTML = "";
+                    
+                            let computedScores = computeScores();
+                            computedScores.forEach((entry, index) => {
+                                let row = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
+                                    <td class="border p-3 text-center">${index + 1}</td>
+                                    <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
+                                    <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
+                    
+                                ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "Summ", "ADR"].forEach((subtask) => {
+                                    row += `<td class="border p-3 text-center">${entry.scores[subtask] || "-"}</td>`;
+                                });
+                    
+                                row += "</tr>";
+                                tableBody.innerHTML += row;
+                            });
+                        }
+                    
+                        // Handle dataset selection
+                        function toggleDataset(dataset) {
+                            if (selectedDatasets.includes(dataset)) {
+                                selectedDatasets = selectedDatasets.filter((d) => d !== dataset);
+                            } else {
+                                selectedDatasets.push(dataset);
+                            }
+                            updateLeaderboard();
+                        }
+                    
+                        fetchLeaderboardData(); // Initialize leaderboard on page load
+                    </script>
+                    <!-- <tbody>
                         <tr class="border bg-gray-100 hover:bg-gray-200 transition">
                             <td class="border p-3 text-center">1</td>
                             <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
@@ -82,7 +171,7 @@
                             <td class="border p-3 text-center">80.2</td>
                             <td class="border p-3 text-center">72.1</td>
                         </tr>
-                    </tbody>
+                    </tbody> -->
                 </table>
             </div>
         </div>
