@@ -5,283 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AfroBench Leaderboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function toggleLeaderboard(view) {
+            document.getElementById("afrobench-view").classList.toggle("hidden", view !== 'afrobench');
+            document.getElementById("afrobench-lite-view").classList.toggle("hidden", view !== 'afrobench-lite');
+        }
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
+    
+    <!-- Navigation Bar -->
+    <nav class="flex justify-between items-center p-6 bg-white shadow-md border-b border-gray-200">
+        <div class="flex space-x-6">
+            <button onclick="toggleLeaderboard('afrobench')" class="hover:text-yellow-600 font-bold text-lg">AfroBench</button>
+            <button onclick="toggleLeaderboard('afrobench-lite')" class="hover:text-yellow-600 font-bold text-lg">AfroBench-Lite</button>
+        </div>
+        <ul class="flex space-x-6">
+            <li><a href="tasks.html" class="hover:text-yellow-600 font-medium">Tasks</a></li>
+            <li><a href="index.html" class="hover:text-yellow-600 font-medium">About</a></li>
+            <li><a href="http://arxiv.org/abs/2311.07978" class="hover:text-yellow-600 font-medium">Paper</a></li>
+        </ul>
+    </nav>
 
-    <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-        <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">AfroBench Leaderboard</h2>
+        <!-- AfroBench Leaderboard View -->
+        <div id="afrobench-view" class="p-6">
+            <h2 class="text-3xl font-bold text-center">AfroBench Leaderboard</h2>
+            <div class="overflow-x-auto mt-6">
+                <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+                    <thead>
+                        <tr class="bg-yellow-500 text-white text-lg">
+                            <th class="border p-3">Rank</th>
+                            <th class="border p-3">Model</th>
+                            <th class="border p-3">Score</th>
+                            <th class="border p-3">NLU</th>
+                            <th class="border p-3">QA</th>
+                            <th class="border p-3">MT</th>
+                            <th class="border p-3">Summarization</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border bg-gray-100 hover:bg-gray-200 transition">
+                            <td class="border p-3 text-center">1</td>
+                            <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
+                            <td class="border p-3 text-center font-bold text-yellow-600">75.3</td>
+                            <td class="border p-3 text-center">80.2</td>
+                            <td class="border p-3 text-center">72.1</td>
+                            <td class="border p-3 text-center">68.2</td>
+                            <td class="border p-3 text-center">70.6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         
-        <!-- Filters Section -->
-        <!-- Task Selection -->
-        <div class="flex flex-wrap gap-3 justify-center mb-4">
-            <button class="task-button" data-task="NLU" onclick="toggleTaskSelection(this)">NLU</button>
-            <button class="task-button" data-task="QA" onclick="toggleTaskSelection(this)">QA</button>
-            <button class="task-button" data-task="Knowledge" onclick="toggleTaskSelection(this)">Knowledge</button>
-            <button class="task-button" data-task="Reasoning" onclick="toggleTaskSelection(this)">Reasoning</button>
-            <button class="task-button" data-task="NLG" onclick="toggleTaskSelection(this)">NLG</button>
+        <!-- AfroBench-Lite Leaderboard View (Hidden by Default) -->
+        <div id="afrobench-lite-view" class="p-6 hidden">
+            <h2 class="text-3xl font-bold text-center">AfroBench-Lite Leaderboard</h2>
+            <div class="overflow-x-auto mt-6">
+                <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
+                    <thead>
+                        <tr class="bg-yellow-500 text-white text-lg">
+                            <th class="border p-3">Rank</th>
+                            <th class="border p-3">Model</th>
+                            <th class="border p-3">Score</th>
+                            <th class="border p-3">NLU</th>
+                            <th class="border p-3">QA</th>
+                            <th class="border p-3">MT</th>
+                            <th class="border p-3">Summarization</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border bg-gray-100 hover:bg-gray-200 transition">
+                            <td class="border p-3 text-center">1</td>
+                            <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
+                            <td class="border p-3 text-center font-bold text-yellow-600">70.2</td>
+                            <td class="border p-3 text-center">75.1</td>
+                            <td class="border p-3 text-center">67.3</td>
+                            <td class="border p-3 text-center">65.4</td>
+                            <td class="border p-3 text-center">68.7</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <!-- Subtask & Dataset Filters -->
-        <div class="flex flex-wrap gap-4 justify-center">
-            <!-- Subtask Dropdown -->
-            <select id="subtaskFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateDatasets()">
-            </select>
-
-            <!-- Dataset Dropdown -->
-            <select id="datasetFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" multiple onchange="updateLeaderboard()">
-            </select>
-
-            <!-- Model Filter -->
-            <select id="modelFilter" class="p-3 border rounded-lg shadow-sm bg-white text-gray-900 w-56" onchange="updateLeaderboard()">
-                <option value="all">All Models</option>
-            </select>
-        </div>
-    </div>
-
-    <style>
-        /* Styling for the Task Selection Buttons */
-        .task-button {
-            padding: 10px 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: white;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .task-button:hover {
-            background-color: #fcd34d; /* Yellow on hover */
-        }
-
-        .task-button.active {
-            background-color: #f59e0b; /* Selected task */
-            color: white;
-            border-color: #d97706;
-        }
-    </style>
-
-        <!-- Leaderboard Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
-                <thead id="leaderboardHeader">
-                    <tr class="bg-yellow-500 text-white text-lg">
-                        <th class="border p-3">Model</th>
-                        <th class="border p-3">Size (B)</th>
-                        <th class="border p-3">AfroBench Score</th>
-                        <th class="border p-3">NLU</th>
-                        <th class="border p-3">QA</th>
-                        <th class="border p-3">Knowledge</th>
-                        <th class="border p-3">Reasoning</th>
-                        <th class="border p-3">NLG</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody"></tbody>
-            </table>
-        </div>
-    </div>
-    <script>
-        // Dataset-to-Task Mapping
-        const DATASET_MAPPING = {
-            "MasakhaPOS": ["NLU", "TokC"],
-            "MasakhaNER": ["NLU", "TokC"],
-            "AfriSenti": ["NLU", "Senti"],
-            "NollySenti": ["NLU", "Senti"],
-            "InjongoIntent": ["NLU", "Intent"],
-            "MasakhaNEWS": ["NLU", "Topic"],
-            "SIB": ["NLU", "Topic"],
-            "AfriHate": ["NLU", "Hate"],
-            "AfriXNLI": ["NLU", "NLI"],
-            "AfriQA": ["QA", "XQA"],
-            "Belebele": ["QA", "RC"],
-            "NaijaRC": ["QA", "RC"],
-            "UHURA": ["Knowledge", "Arc-E"],
-            "OpenAIMMLU": ["Knowledge", "MMLU"],
-            "AfriMMLU": ["Knowledge", "MMLU"],
-            "AfriMGSM": ["Reasoning", "Math"],
-            "SALT - en_xx": ["NLG", "MT"],
-            "SALT - xx_en": ["NLG", "MT"],
-            "Flores - en_xx": ["NLG", "MT"],
-            "Flores - xx_en": ["NLG", "MT"],
-            "MAFAND - en_xx": ["NLG", "MT"],
-            "MAFAND - xx_en": ["NLG", "MT"],
-            "NTREX - en_xx": ["NLG", "MT"],
-            "NTREX - xx_en": ["NLG", "MT"],
-            "XLSUM": ["NLG", "Summ"],
-            "ADR": ["NLG", "Diacritics"]
-        };
-
-        let selectedTasks = new Set();
-
-        function toggleTaskSelection(button) {
-            const task = button.getAttribute("data-task");
-
-            if (selectedTasks.has(task)) {
-                selectedTasks.delete(task);
-                button.classList.remove("active");
-            } else {
-                selectedTasks.add(task);
-                button.classList.add("active");
-            }
-
-            updateSubtasks();
-        }
-
-        function updateSubtasks() {
-            const selectedTaskArray = [...selectedTasks];
-
-            const subtasks = [...new Set(
-                Object.values(DATASET_MAPPING)
-                    .filter(([task]) => selectedTaskArray.includes(task))
-                    .map(([, subtask]) => subtask)
-            )];
-
-            populateDropdown("subtaskFilter", subtasks);
-            updateDatasets();
-        }
-
-        function updateDatasets() {
-            const selectedTaskArray = [...selectedTasks];
-            const selectedSubtasks = getSelectedOptions("subtaskFilter");
-
-            const datasets = Object.keys(DATASET_MAPPING)
-                .filter(dataset =>
-                    selectedTaskArray.includes(DATASET_MAPPING[dataset][0]) &&
-                    (selectedSubtasks.length === 0 || selectedSubtasks.includes(DATASET_MAPPING[dataset][1]))
-                );
-
-            populateDropdown("datasetFilter", datasets);
-        }
-
-        function populateDropdown(id, options) {
-            const dropdown = document.getElementById(id);
-            dropdown.innerHTML = "";
-            options.forEach(option => {
-                const opt = document.createElement("option");
-                opt.value = option;
-                opt.textContent = option;
-                dropdown.appendChild(opt);
-            });
-        }
-
-        function getSelectedOptions(containerId) {
-            return [...document.getElementById(containerId).selectedOptions].map(opt => opt.value);
-        }
-
-        // Initialize default state
-        updateSubtasks();
-    </script>
- 
-    <!-- </script> -->
-
-    <!-- <script>
-        let leaderboardData = {};
-        let taskMapping = {};
-
-        async function fetchData() {
-            const response = await fetch("leaderboard_data.json");
-            leaderboardData = await response.json();
-            populateTasks();
-            updateLeaderboard();
-        }
-
-        function populateTasks() {
-            const taskSelect = document.getElementById("taskFilter");
-            taskMapping = Object.keys(leaderboardData);
-
-            taskMapping.forEach(task => {
-                taskSelect.innerHTML += `<option value="${task}">${task}</option>`;
-            });
-        }
-
-        function updateSubtasks() {
-            const selectedTask = document.getElementById("taskFilter").value;
-            const subtaskSelect = document.getElementById("subtaskFilter");
-            subtaskSelect.innerHTML = `<option value="all">All Subtasks</option>`;
-
-            if (selectedTask !== "all") {
-                const subtasks = Object.keys(leaderboardData[selectedTask].subtasks);
-                subtasks.forEach(subtask => {
-                    subtaskSelect.innerHTML += `<option value="${subtask}">${subtask}</option>`;
-                });
-            }
-
-            updateDatasets();
-        }
-
-        function updateDatasets() {
-            const selectedTask = document.getElementById("taskFilter").value;
-            const selectedSubtask = document.getElementById("subtaskFilter").value;
-            const datasetSelect = document.getElementById("datasetFilter");
-            datasetSelect.innerHTML = `<option value="all">All Datasets</option>`;
-
-            if (selectedTask !== "all" && selectedSubtask !== "all") {
-                const datasets = Object.keys(leaderboardData[selectedTask].subtasks[selectedSubtask].datasets);
-                datasets.forEach(dataset => {
-                    datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
-                });
-            }
-
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            const selectedTask = document.getElementById("taskFilter").value;
-            const selectedSubtask = document.getElementById("subtaskFilter").value;
-            const selectedDataset = document.getElementById("datasetFilter").value;
-            const selectedModel = document.getElementById("modelFilter").value;
-
-            const tableBody = document.getElementById("leaderboardBody");
-            const tableHeader = document.getElementById("leaderboardHeader");
-            tableBody.innerHTML = "";
-
-            if (selectedTask === "all") return;
-
-            let subtaskData = leaderboardData[selectedTask].subtasks;
-            if (selectedSubtask !== "all") subtaskData = { [selectedSubtask]: subtaskData[selectedSubtask] };
-
-            let models = new Set();
-            Object.values(subtaskData).forEach(subtask => {
-                Object.keys(subtask.datasets).forEach(dataset => {
-                    if (selectedDataset !== "all" && dataset !== selectedDataset) return;
-                    Object.keys(subtask.datasets[dataset].scores).forEach(model => models.add(model));
-                });
-            });
-
-            models.forEach(model => {
-                if (selectedModel !== "all" && model !== selectedModel) return;
-
-                let modelRow = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
-                    <td class="border p-3 font-medium text-gray-900">${model}</td>
-                    <td class="border p-3 text-gray-800">-</td>`;
-
-                if (selectedDataset === "all") {
-                    let totalScore = 0;
-                    let count = 0;
-
-                    Object.values(subtaskData).forEach(subtask => {
-                        Object.keys(subtask.datasets).forEach(dataset => {
-                            if (subtask.datasets[dataset].scores[model]) {
-                                let avgScore = subtask.datasets[dataset].scores[model].reduce((a, b) => a + b, 0) / subtask.datasets[dataset].scores[model].length;
-                                totalScore += avgScore;
-                                count++;
-                            }
-                        });
-                    });
-
-                    modelRow += `<td class="border p-3 text-center">${(count > 0 ? (totalScore / count).toFixed(1) : "-")}</td>`;
-                } else {
-                    let datasetScores = subtaskData[selectedSubtask].datasets[selectedDataset].scores[model];
-                    datasetScores.forEach(score => {
-                        modelRow += `<td class="border p-3 text-center">${score.toFixed(1)}</td>`;
-                    });
-                }
-
-                modelRow += `</tr>`;
-                tableBody.innerHTML += modelRow;
-            });
-        }
-
-        fetchData();
-    </script> -->
-</body>
-</html>
+    </body>
+    </html>
