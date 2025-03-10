@@ -43,7 +43,7 @@
                             <th colspan="1" class="border p-3">Reasoning</th>
                             <th colspan="4" class="border p-3">NLG</th>
                         </tr>
-                        <tr class="bg-yellow-500 text-white text-center text-md">
+                        <tr class="bg-yellow-500 text-white text-center text-small">
                             <th class="border p-3">POS</th>
                             <th class="border p-3">NER</th>
                             <th class="border p-3">Senti</th>
@@ -62,6 +62,7 @@
                             <th class="border p-3">ADR</th>
                         </tr>
                     </thead>
+                    <tbody>
                     <script>
                         let leaderboardData = {}; // Store loaded JSON
                         let selectedDatasets = []; // Track dataset filters
@@ -151,27 +152,7 @@
                     
                         fetchLeaderboardData(); // Initialize leaderboard on page load
                     </script>
-                    <!-- <tbody>
-                        <tr class="border bg-gray-100 hover:bg-gray-200 transition">
-                            <td class="border p-3 text-center">1</td>
-                            <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
-                            <td class="border p-3 text-center font-bold text-yellow-600">75.3</td>
-                            <td class="border p-3 text-center">80.2</td>
-                            <td class="border p-3 text-center">72.1</td>
-                            <td class="border p-3 text-center">68.2</td>
-                            <td class="border p-3 text-center">70.6</td>
-                            <td class="border p-3 text-center">80.2</td>
-                            <td class="border p-3 text-center">72.1</td>
-                            <td class="border p-3 text-center">68.2</td>
-                            <td class="border p-3 text-center">70.6</td>
-                            <td class="border p-3 text-center">80.2</td>
-                            <td class="border p-3 text-center">72.1</td>
-                            <td class="border p-3 text-center">68.2</td>
-                            <td class="border p-3 text-center">70.6</td>
-                            <td class="border p-3 text-center">80.2</td>
-                            <td class="border p-3 text-center">72.1</td>
-                        </tr>
-                    </tbody> -->
+                </tbody>
                 </table>
             </div>
         </div>
