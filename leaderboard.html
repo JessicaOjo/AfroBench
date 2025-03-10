@@ -33,14 +33,32 @@
             <div class="overflow-x-auto mt-6">
                 <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
                     <thead>
-                        <tr class="bg-yellow-500 text-white text-lg">
-                            <th class="border p-3">Rank</th>
-                            <th class="border p-3">Model</th>
-                            <th class="border p-3">Score</th>
-                            <th class="border p-3">NLU</th>
-                            <th class="border p-3">QA</th>
-                            <th class="border p-3">MT</th>
-                            <th class="border p-3">Summarization</th>
+                        <tr class="bg-gray-200 text-gray-900 text-center">
+                            <th rowspan="2" class="border p-3">Rank</th>
+                            <th rowspan="2" class="border p-3">Model</th>
+                            <th rowspan="2" class="border p-3">Score</th>
+                            <th colspan="7" class="border p-3">NLU</th>
+                            <th colspan="2" class="border p-3">QA</th>
+                            <th colspan="2" class="border p-3">Knowledge</th>
+                            <th colspan="1" class="border p-3">Reasoning</th>
+                            <th colspan="4" class="border p-3">NLG</th>
+                        </tr>
+                        <tr class="bg-gray-100 text-gray-900 text-center">
+                            <th class="border p-3">POS</th>
+                            <th class="border p-3">NER</th>
+                            <th class="border p-3">Senti</th>
+                            <th class="border p-3">Topic</th>
+                            <th class="border p-3">Intent</th>
+                            <th class="border p-3">Hate</th>
+                            <th class="border p-3">NLI.</th>
+                            <th class="border p-3">XQA</th>
+                            <th class="border p-3">Arc-E</th>
+                            <th class="border p-3">MMLU</th>
+                            <th class="border p-3">MATH</th>
+                            <th class="border p-3">MT(en/fr-xx)</th>
+                            <th class="border p-3">MT(xx-en/fr)</th>
+                            <th class="border p-3">SUMM</th>
+                            <th class="border p-3">ADR</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,6 +70,16 @@
                             <td class="border p-3 text-center">72.1</td>
                             <td class="border p-3 text-center">68.2</td>
                             <td class="border p-3 text-center">70.6</td>
+                            <td class="border p-3 text-center">80.2</td>
+                            <td class="border p-3 text-center">72.1</td>
+                            <td class="border p-3 text-center">68.2</td>
+                            <td class="border p-3 text-center">70.6</td>
+                            <td class="border p-3 text-center">80.2</td>
+                            <td class="border p-3 text-center">72.1</td>
+                            <td class="border p-3 text-center">68.2</td>
+                            <td class="border p-3 text-center">70.6</td>
+                            <td class="border p-3 text-center">80.2</td>
+                            <td class="border p-3 text-center">72.1</td>
                         </tr>
                     </tbody>
                 </table>
@@ -68,10 +96,14 @@
                             <th class="border p-3">Rank</th>
                             <th class="border p-3">Model</th>
                             <th class="border p-3">Score</th>
-                            <th class="border p-3">NLU</th>
-                            <th class="border p-3">QA</th>
-                            <th class="border p-3">MT</th>
-                            <th class="border p-3">Summarization</th>
+                            <th class="border p-3">Intent</th>
+                            <th class="border p-3">Topic</th>
+                            <th class="border p-3">NLI</th>
+                            <th class="border p-3">RC</th>
+                            <th class="border p-3">MMLU</th>
+                            <th class="border p-3">MATH</th>
+                            <th class="border p-3">MT(en/fr-xx)</th>
+                            <th class="border p-3">MT(xx-en/fr)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,6 +111,10 @@
                             <td class="border p-3 text-center">1</td>
                             <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
                             <td class="border p-3 text-center font-bold text-yellow-600">70.2</td>
+                            <td class="border p-3 text-center">75.1</td>
+                            <td class="border p-3 text-center">67.3</td>
+                            <td class="border p-3 text-center">65.4</td>
+                            <td class="border p-3 text-center">68.7</td>
                             <td class="border p-3 text-center">75.1</td>
                             <td class="border p-3 text-center">67.3</td>
                             <td class="border p-3 text-center">65.4</td>
