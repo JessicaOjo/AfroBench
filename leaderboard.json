@@ -67,7 +67,7 @@
                     "LLaMAX3 8B": 21.067894736842103,
                     "LLaMa2 7b": 10.000701754385961,
                     "LLaMa3.1 70B": 24.149473684210527,
-                    "LLaMa3.1 8B": NaN,
+                    "LLaMa3.1 8B": 0,
                     "LLaMa3 8B": 13.106315789473681,
                     "Aya 101": 24.008771929824565,
                     "Gemma1.1 7b": 8.227894736842105,
@@ -141,14 +141,14 @@
         "SUMM": {
             "datasets": {
                 "xlsum": {
-                    "AfroLLaMa 8B": NaN,
-                    "LLaMAX3 8B": NaN,
-                    "LLaMa2 7b": NaN,
+                    "AfroLLaMa 8B": 0,
+                    "LLaMAX3 8B": 0,
+                    "LLaMa2 7b": 0,
                     "LLaMa3.1 70B": 67.25583333333333,
-                    "LLaMa3.1 8B": NaN,
+                    "LLaMa3.1 8B": 0,
                     "LLaMa3 8B": 65.91416666666666,
-                    "Aya 101": NaN,
-                    "Gemma1.1 7b": NaN,
+                    "Aya 101": 0,
+                    "Gemma1.1 7b": 0,
                     "Gemma2 27b": 66.125,
                     "Gemma2 9b": 65.86916666666666,
                     "Gemini 1.5 pro": 66.09333333333333,
@@ -259,18 +259,18 @@
                     "GPT-4o (Aug)": 84.89125
                 },
                 "sib": {
-                    "AfroLLaMa 8B": NaN,
-                    "LLaMAX3 8B": NaN,
-                    "LLaMa2 7b": NaN,
-                    "LLaMa3.1 70B": NaN,
-                    "LLaMa3.1 8B": NaN,
-                    "LLaMa3 8B": NaN,
-                    "Aya 101": NaN,
-                    "Gemma1.1 7b": NaN,
-                    "Gemma2 27b": NaN,
-                    "Gemma2 9b": NaN,
+                    "AfroLLaMa 8B": 0,
+                    "LLaMAX3 8B": 0,
+                    "LLaMa2 7b": 0,
+                    "LLaMa3.1 70B": 0,
+                    "LLaMa3.1 8B": 0,
+                    "LLaMa3 8B": 0,
+                    "Aya 101": 0,
+                    "Gemma1.1 7b": 0,
+                    "Gemma2 27b": 0,
+                    "Gemma2 9b": 0,
                     "Gemini 1.5 pro": 75.01571428571428,
-                    "GPT-4o (Aug)": NaN
+                    "GPT-4o (Aug)": 0
                 }
             }
         },
@@ -369,7 +369,7 @@
         "Math": {
             "datasets": {
                 "afrimgsm": {
-                    "AfroLLaMa 8B": NaN,
+                    "AfroLLaMa 8B": 0,
                     "Aya 101": 4.968421052631578,
                     "Gemma1.1 7b": 6.178947368421052,
                     "LLaMa2 7b": 3.326315789473684,
