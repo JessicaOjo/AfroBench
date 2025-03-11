@@ -119,7 +119,7 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
                 for model in models:
                     best_avg_row = df[df["model"] == model].loc[df[df["model"] == model][avg_col].idxmax()]
                     scores = [best_avg_row[col] for col in language_columns if col in best_avg_row]
-                    dataset_scores[model] = round(sum(scores) / len(scores) if scores else None, 2)  # Avoid division by zero
+                    dataset_scores[model] = round(sum(scores) / len(scores) if scores else None, 1)  # Avoid division by zero
 
                 leaderboard_data[task][subtask]["datasets"][dataset_name] = dataset_scores
 
@@ -139,7 +139,7 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
 
                 for model in models:
                     best_avg_row = df[df["model"] == model].loc[df[df["model"] == model][avg_col].idxmax()]
-                    model_scores = [round(score, 2) for score in best_avg_row[language_columns].to_list()]
+                    model_scores = [round(score, 1) for score in best_avg_row[language_columns].to_list()]
                     task_data[task]["subtasks"][subtask]["datasets"][dataset_name]["scores"][model] = model_scores
 
     # Save leaderboard JSON if enabled
@@ -158,4 +158,4 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
         print("Task-wise JSON files with subtasks generated successfully!")
 
 
-generate_json_files(leaderboard=False, leaderboard_name="afrobench.json")
+generate_json_files(leaderboard=True, leaderboard_name="afrobench.json")
