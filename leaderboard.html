@@ -130,7 +130,6 @@
                         });
                     });
                 });
-    
             } else if (view === "afrobench-lite") {
                 // AfroBench-Lite JSON structure (directly stores task names as keys)
                 Object.keys(leaderboardData).forEach((task) => {
@@ -146,7 +145,6 @@
                     });
                 });
             }
-    
             // Compute final per-model averages
             let finalScores = [];
             Object.keys(modelScores).forEach((model) => {
