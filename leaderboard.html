@@ -131,16 +131,13 @@
                     });
                 });
             } else if (currentView === "afrobench-lite") {
-                // AfroBench-Lite JSON structure (directly stores task names as keys)
                 Object.keys(leaderboardData).forEach((task) => {
-                    Object.keys(leaderboardData[task]).forEach((dataset) => {
-                        let datasetScores = leaderboardData[task][dataset];
-
-                        Object.keys(datasetScores).forEach((model) => {
+                    Object.entries(leaderboardData[task]).forEach(([dataset, datasetScores]) => {
+                        Object.entries(datasetScores).forEach(([model, score]) => {
                             if (!modelScores[model]) modelScores[model] = {};
-                            if (!modelScores[model][task]) modelScores[model][task] = []; // Store scores under task name
+                            if (!modelScores[model][task]) modelScores[model][task] = [];
 
-                            modelScores[model][task].push(datasetScores[model]); // Append dataset score
+                            modelScores[model][task].push(score); // Append dataset score correctly
                         });
                     });
                 });
