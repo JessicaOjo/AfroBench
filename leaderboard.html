@@ -56,13 +56,13 @@
                             <th class="border p-3">RC</th>
                             <th class="border p-3">MMLU</th>
                             <th class="border p-3">MATH</th>
-                            <th class="border p-3">MT(en/fr-xx)</th>
-                            <th class="border p-3">MT(xx-en/fr)</th>
+                            <th class="border p-3">MT<br>(en/fr-xx)</th>
+                            <th class="border p-3">MT<br>(xx-en/fr)</th>
                             <th class="border p-3">SUMM</th>
                             <th class="border p-3">ADR</th>
                         </tr>
                     </thead>
-                    <tbody id="afrobench-view">
+                    <tbody id="afrobench-table">
                         <!-- Table rows will be dynamically inserted here -->
                     </tbody>
                 </table>
@@ -113,7 +113,7 @@
     
         // Fetch leaderboard data on page load
         async function fetchLeaderboardData() {
-            const response = await fetch("leaderboard.json");
+            const response = await fetch("leaderboard_json/afrobench.json");
             leaderboardData = await response.json();
             updateLeaderboard(); // Render table
         }
