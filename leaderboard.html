@@ -37,11 +37,11 @@
                             <th rowspan="2" class="border p-2">Rank</th>
                             <th rowspan="2" class="border p-2">Model</th>
                             <th rowspan="2" class="border p-2">Score</th>
-                            <th colspan="7" class="border p-2">NLU</th>
-                            <th colspan="2" class="border p-2">QA</th>
-                            <th colspan="2" class="border p-2">Knowledge</th>
-                            <th colspan="1" class="border p-2">Reasoning</th>
-                            <th colspan="4" class="border p-2">NLG</th>
+                            <th colspan="7" class="border p-3">NLU</th>
+                            <th colspan="2" class="border p-3">QA</th>
+                            <th colspan="2" class="border p-3">Knowledge</th>
+                            <th colspan="1" class="border p-3">Reasoning</th>
+                            <th colspan="4" class="border p-3">NLG</th>
                         </tr>
                         <tr class="bg-yellow-600 text-white text-center text-sm">
                             <th class="border p-2">POS</th>
@@ -173,7 +173,7 @@
             const tableBody = document.querySelector(currentView === "afrobench" ? "#afrobench-table" : "#afrobench_lite-table");
             tableBody.innerHTML = "";
 
-            let computedScores = computeScores(currentView);
+            let computedScores = computeScores();
             computedScores.forEach((entry, index) => {
                 let row = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
                     <td class="border p-3 text-center">${index + 1}</td>
