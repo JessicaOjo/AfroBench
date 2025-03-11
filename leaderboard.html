@@ -98,35 +98,56 @@
     <script>
         let leaderboardData = {};
         let selectedDatasets = [];
-        let currentView = "afrobench"; // Default to AfroBench
+        let currentView = "afrobench"; // Default view is AfroBench
     
-        // Function to load leaderboard data dynamically
-        async function fetchLeaderboardData(view) {
-            const filePath = view === "afrobench-lite" ? "leaderboard_json/afrobench_lite.json" : "leaderboard_json/afrobench.json";
+        // Function to load leaderboard data for AfroBench or AfroBench-Lite
+        async function fetchLeaderboardData() {
+            const filePath = currentView === "afrobench-lite" ? "leaderboard_json/afrobench_lite.json" : "leaderboard_json/afrobench.json";
             const response = await fetch(filePath);
             leaderboardData = await response.json();
-            updateLeaderboard(); // Render the table
+            updateLeaderboard(); // Render table
         }
     
-        // Compute per-model scores dynamically
+        // Compute per-model scores dynamically (for both views)
         function computeScores() {
             let modelScores = {}; 
+        
+            if (currentView === "afrobench") {
+                // AfroBench JSON structure
+                Object.keys(leaderboardData).forEach((task) => {
+                    Object.keys(leaderboardData[task]).forEach((subtask) => {
+                        Object.keys(leaderboardData[task][subtask].datasets).forEach((dataset) => {
+                            let datasetScores = leaderboardData[task][subtask].datasets[dataset];
     
-            Object.keys(leaderboardData).forEach((subtask) => {
-                Object.keys(leaderboardData[subtask]).forEach((dataset) => {
-                    let datasetScores = leaderboardData[subtask][dataset];
+                            Object.keys(datasetScores).forEach((model) => {
+                                if (!modelScores[model]) modelScores[model] = {};
+                                if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
     
-                    Object.keys(datasetScores).forEach((model) => {
-                        if (!modelScores[model]) modelScores[model] = {};
-                        if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
-    
-                        // Include dataset only if no filter is applied or if it matches selectedDatasets
-                        if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
-                            modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
-                        }
+                                if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
+                                    modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
+                                }
+                            });
+                        });
                     });
                 });
-            });
+    
+            } else if (currentView === "afrobench-lite") {
+                // AfroBench-Lite JSON structure (more direct)
+                Object.keys(leaderboardData).forEach((subtask) => {
+                    Object.keys(leaderboardData[subtask]).forEach((dataset) => {
+                        let datasetScores = leaderboardData[subtask][dataset];
+    
+                        Object.keys(datasetScores).forEach((model) => {
+                            if (!modelScores[model]) modelScores[model] = {};
+                            if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
+    
+                            if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
+                                modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
+                            }
+                        });
+                    });
+                });
+            }
     
             // Compute final per-model averages
             let finalScores = [];
@@ -150,7 +171,7 @@
             return finalScores.sort((a, b) => b.overallScore - a.overallScore); // Sort by rank
         }
     
-        // Update leaderboard table dynamically
+        // Update leaderboard table dynamically (Handles both views)
         function updateLeaderboard() {
             const tableBody = document.querySelector(`#${currentView}-view tbody`);
             tableBody.innerHTML = "";
@@ -162,7 +183,7 @@
                     <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
                     <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
     
-                let relevantSubtasks = currentView === "afrobench-lite" 
+                let relevantSubtasks = currentView === "afrobench-lite"
                     ? ["Topic", "Intent", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"]
                     : ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"];
     
@@ -175,26 +196,26 @@
             });
         }
     
-// Handle dataset selection (for future filtering options)
-function toggleDataset(dataset) {
-        if (selectedDatasets.includes(dataset)) {
-            selectedDatasets = selectedDatasets.filter((d) => d !== dataset);
-        } else {
-            selectedDatasets.push(dataset);
+        // Handle dataset selection (for future filtering options)
+        function toggleDataset(dataset) {
+            if (selectedDatasets.includes(dataset)) {
+                selectedDatasets = selectedDatasets.filter((d) => d !== dataset);
+            } else {
+                selectedDatasets.push(dataset);
+            }
+            updateLeaderboard();
         }
-        updateLeaderboard();
-    }
-
-    // Function to switch views
-    function switchView(view) {
-        currentView = view;
-        document.getElementById("afrobench-view").style.display = view === "afrobench" ? "block" : "none";
-        document.getElementById("afrobench-lite-view").style.display = view === "afrobench-lite" ? "block" : "none";
-        fetchLeaderboardData(view);
-    }
-
-    // Initialize the page with AfroBench view
-    fetchLeaderboardData("afrobench");
-    </script>    
+    
+        // Function to switch views
+        function switchView(view) {
+            currentView = view;
+            document.getElementById("afrobench-view").style.display = view === "afrobench" ? "block" : "none";
+            document.getElementById("afrobench-lite-view").style.display = view === "afrobench-lite" ? "block" : "none";
+            fetchLeaderboardData();
+        }
+    
+        // Initialize the page with AfroBench view
+        fetchLeaderboardData();
+    </script>            
     </body>
     </html>
