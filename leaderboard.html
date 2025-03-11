@@ -100,7 +100,7 @@
         let selectedDatasets = [];
         let currentView = "afrobench"; // Default view is AfroBench
     
-        // Function to load leaderboard data for AfroBench or AfroBench-Lite
+        // Function to fetch leaderboard data
         async function fetchLeaderboardData() {
             const filePath = currentView === "afrobench-lite" ? "leaderboard_json/afrobench_lite.json" : "leaderboard_json/afrobench.json";
             const response = await fetch(filePath);
@@ -131,13 +131,16 @@
                     });
                 });
             } else if (currentView === "afrobench-lite") {
+                // AfroBench-Lite JSON structure (Directly stores task names as keys)
                 Object.keys(leaderboardData).forEach((task) => {
-                    Object.entries(leaderboardData[task]).forEach(([dataset, datasetScores]) => {
-                        Object.entries(datasetScores).forEach(([model, score]) => {
+                    Object.keys(leaderboardData[task]).forEach((dataset) => {
+                        let datasetScores = leaderboardData[task][dataset];
+    
+                        Object.keys(datasetScores).forEach((model) => {
                             if (!modelScores[model]) modelScores[model] = {};
                             if (!modelScores[model][task]) modelScores[model][task] = [];
-
-                            modelScores[model][task].push(score); // Append dataset score correctly
+    
+                            modelScores[model][task].push(datasetScores[model]); // Append dataset score correctly
                         });
                     });
                 });
