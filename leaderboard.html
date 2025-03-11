@@ -30,7 +30,7 @@
         <!-- AfroBench Leaderboard View -->
         <div id="afrobench-view" class="p-6">
             <h2 class="text-3xl font-bold text-center">AfroBench Leaderboard</h2>
-            <div class="overflow-x-auto mt-6">
+            <div class="max-w-[90%] mx-auto overflow-x-auto mt-6">
                 <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
                     <thead>
                         <tr class="bg-yellow-600 text-white text-center text-lg">
@@ -72,12 +72,12 @@
         <!-- AfroBench-Lite Leaderboard View (Hidden by Default) -->
         <div id="afrobench-lite-view" class="p-6 hidden">
             <h2 class="text-3xl font-bold text-center">AfroBench-Lite Leaderboard</h2>
-            <div class="overflow-x-auto mt-6">
+            <div class="max-w-[90%] mx-auto overflow-x-auto mt-6">
                 <table class="w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg">
                     <thead>
                         <tr class="bg-yellow-600 text-white text-lg">
-                            <th class="border p-3">Rank</th>
-                            <th class="border p-3">Model</th>
+                            <th class="border p-2">Rank</th>
+                            <th class="border p-2">Model</th>
                             <th class="border p-3">Score</th>
                             <th class="border p-3">Intent</th>
                             <th class="border p-3">Topic</th>
@@ -211,7 +211,7 @@
         }
     
         // Initialize the page with AfroBench view
-        // fetchLeaderboardData();
+        fetchLeaderboardData();
     </script>            
     </body>
     </html>
