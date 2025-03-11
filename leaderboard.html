@@ -175,7 +175,7 @@
                     <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
                     <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
     
-                ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "Summ", "ADR"].forEach((subtask) => {
+                ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"].forEach((subtask) => {
                     row += `<td class="border p-3 text-center">${entry.scores[subtask] || "-"}</td>`;
                 });
     
