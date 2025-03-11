@@ -130,7 +130,7 @@
                         });
                     });
                 });
-            } else if (view === "afrobench-lite") {
+            } else if (currentView === "afrobench-lite") {
                 // AfroBench-Lite JSON structure (directly stores task names as keys)
                 Object.keys(leaderboardData).forEach((task) => {
                     Object.keys(leaderboardData[task]).forEach((dataset) => {
@@ -148,45 +148,46 @@
             // Compute final per-model averages
             let finalScores = [];
             Object.keys(modelScores).forEach((model) => {
-                let subtasks = modelScores[model];
+                let tasks = modelScores[model];
                 let avgScores = {};
                 let totalScore = 0;
                 let count = 0;
-    
-                Object.keys(subtasks).forEach((subtask) => {
-                    let subtaskAvg = subtasks[subtask].reduce((a, b) => a + b, 0) / subtasks[subtask].length;
-                    avgScores[subtask] = subtaskAvg.toFixed(1);
-                    totalScore += subtaskAvg;
+
+                Object.keys(tasks).forEach((task) => {
+                    let taskAvg = tasks[task].reduce((a, b) => a + b, 0) / tasks[task].length;
+                    avgScores[task] = taskAvg.toFixed(1);
+
+                    totalScore += taskAvg;
                     count++;
                 });
-    
+
                 let overallScore = count > 0 ? (totalScore / count).toFixed(1) : "N/A";
                 finalScores.push({ model, overallScore, scores: avgScores });
             });
-    
+
             return finalScores.sort((a, b) => b.overallScore - a.overallScore); // Sort by rank
         }
-    
+
         // Update leaderboard table dynamically (Handles both views)
-        function updateLeaderboard() {
-            const tableBody = document.querySelector(`#${currentView}-view tbody`);
+        function updateLeaderboard(view) {
+            const tableBody = document.querySelector(view === "afrobench" ? "#afrobench-table" : "#afrobench_lite-table");
             tableBody.innerHTML = "";
-    
-            let computedScores = computeScores();
+
+            let computedScores = computeScores(view);
             computedScores.forEach((entry, index) => {
                 let row = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
                     <td class="border p-3 text-center">${index + 1}</td>
                     <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
                     <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
-    
-                let relevantSubtasks = currentView === "afrobench-lite"
-                    ? ["Topic", "Intent", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"]
-                    : ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"];
-    
-                relevantSubtasks.forEach((subtask) => {
-                    row += `<td class="border p-3 text-center">${entry.scores[subtask] || "-"}</td>`;
+
+                let columns = view === "afrobench" 
+                    ? ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"]
+                    : ["Intent", "Topic", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"];
+
+                columns.forEach((task) => {
+                    row += `<td class="border p-3 text-center">${entry.scores[task] || "-"}</td>`;
                 });
-    
+
                 row += "</tr>";
                 tableBody.innerHTML += row;
             });
