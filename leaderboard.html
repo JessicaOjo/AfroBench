@@ -89,52 +89,41 @@
                             <th class="border p-3">MT(xx-en/fr)</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="border bg-gray-100 hover:bg-gray-200 transition">
-                            <td class="border p-3 text-center">1</td>
-                            <td class="border p-3 font-medium text-gray-900">GPT-4o</td>
-                            <td class="border p-3 text-center font-bold text-yellow-600">70.2</td>
-                            <td class="border p-3 text-center">75.1</td>
-                            <td class="border p-3 text-center">67.3</td>
-                            <td class="border p-3 text-center">65.4</td>
-                            <td class="border p-3 text-center">68.7</td>
-                            <td class="border p-3 text-center">75.1</td>
-                            <td class="border p-3 text-center">67.3</td>
-                            <td class="border p-3 text-center">65.4</td>
-                            <td class="border p-3 text-center">68.7</td>
-                        </tr>
+                    <tbody id="afrobench_lite-table">
+                        <!-- Table rows will be dynamically inserted here -->
                     </tbody>
                 </table>
             </div>
         </div>
     <script>
-        let leaderboardData = {}; // Store loaded JSON
-        let selectedDatasets = []; // Track dataset filters
+        let leaderboardData = {};
+        let selectedDatasets = [];
+        let currentView = "afrobench"; // Default to AfroBench
     
-        // Fetch leaderboard data on page load
-        async function fetchLeaderboardData() {
-            const response = await fetch("leaderboard_json/afrobench.json");
+        // Function to load leaderboard data dynamically
+        async function fetchLeaderboardData(view) {
+            const filePath = view === "afrobench-lite" ? "leaderboard_json/afrobench_lite.json" : "leaderboard_json/afrobench.json";
+            const response = await fetch(filePath);
             leaderboardData = await response.json();
-            updateLeaderboard(); // Render table
+            updateLeaderboard(); // Render the table
         }
     
         // Compute per-model scores dynamically
         function computeScores() {
             let modelScores = {}; 
     
-            Object.keys(leaderboardData).forEach((task) => {
-                Object.keys(leaderboardData[task]).forEach((subtask) => {
-                    Object.keys(leaderboardData[task][subtask].datasets).forEach((dataset) => {
-                        let datasetScores = leaderboardData[task][subtask].datasets[dataset];
+            Object.keys(leaderboardData).forEach((subtask) => {
+                Object.keys(leaderboardData[subtask]).forEach((dataset) => {
+                    let datasetScores = leaderboardData[subtask][dataset];
     
-                        Object.keys(datasetScores).forEach((model) => {
-                            if (!modelScores[model]) modelScores[model] = {};
-                            if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
+                    Object.keys(datasetScores).forEach((model) => {
+                        if (!modelScores[model]) modelScores[model] = {};
+                        if (!modelScores[model][subtask]) modelScores[model][subtask] = [];
     
-                            if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
-                                modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
-                            }
-                        });
+                        // Include dataset only if no filter is applied or if it matches selectedDatasets
+                        if (selectedDatasets.length === 0 || selectedDatasets.includes(dataset)) {
+                            modelScores[model][subtask].push(datasetScores[model]); // Store dataset score
+                        }
                     });
                 });
             });
@@ -144,14 +133,12 @@
             Object.keys(modelScores).forEach((model) => {
                 let subtasks = modelScores[model];
                 let avgScores = {};
-    
                 let totalScore = 0;
                 let count = 0;
     
                 Object.keys(subtasks).forEach((subtask) => {
                     let subtaskAvg = subtasks[subtask].reduce((a, b) => a + b, 0) / subtasks[subtask].length;
                     avgScores[subtask] = subtaskAvg.toFixed(1);
-    
                     totalScore += subtaskAvg;
                     count++;
                 });
@@ -163,9 +150,9 @@
             return finalScores.sort((a, b) => b.overallScore - a.overallScore); // Sort by rank
         }
     
-        // Update the table dynamically
+        // Update leaderboard table dynamically
         function updateLeaderboard() {
-            const tableBody = document.querySelector("#afrobench-view tbody");
+            const tableBody = document.querySelector(`#${currentView}-view tbody`);
             tableBody.innerHTML = "";
     
             let computedScores = computeScores();
@@ -175,7 +162,11 @@
                     <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
                     <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
     
-                ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"].forEach((subtask) => {
+                let relevantSubtasks = currentView === "afrobench-lite" 
+                    ? ["Topic", "Intent", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"]
+                    : ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"];
+    
+                relevantSubtasks.forEach((subtask) => {
                     row += `<td class="border p-3 text-center">${entry.scores[subtask] || "-"}</td>`;
                 });
     
@@ -184,17 +175,26 @@
             });
         }
     
-        // Handle dataset selection
-        function toggleDataset(dataset) {
-            if (selectedDatasets.includes(dataset)) {
-                selectedDatasets = selectedDatasets.filter((d) => d !== dataset);
-            } else {
-                selectedDatasets.push(dataset);
-            }
-            updateLeaderboard();
+// Handle dataset selection (for future filtering options)
+function toggleDataset(dataset) {
+        if (selectedDatasets.includes(dataset)) {
+            selectedDatasets = selectedDatasets.filter((d) => d !== dataset);
+        } else {
+            selectedDatasets.push(dataset);
         }
-    
-        fetchLeaderboardData(); // Initialize leaderboard on page load
+        updateLeaderboard();
+    }
+
+    // Function to switch views
+    function switchView(view) {
+        currentView = view;
+        document.getElementById("afrobench-view").style.display = view === "afrobench" ? "block" : "none";
+        document.getElementById("afrobench-lite-view").style.display = view === "afrobench-lite" ? "block" : "none";
+        fetchLeaderboardData(view);
+    }
+
+    // Initialize the page with AfroBench view
+    fetchLeaderboardData("afrobench");
     </script>    
     </body>
     </html>

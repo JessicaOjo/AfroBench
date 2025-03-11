@@ -58,7 +58,7 @@ MODEL_MAP = {
 }
 
 
-def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", leaderboard_name=None, leaderboard=True):
+def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", leaderboard=None):
     os.makedirs(output_dir, exist_ok=True)
 
     # Dictionary to store either per-task JSON data or the leaderboard
@@ -66,6 +66,10 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
     leaderboard_data = {}
 
     task_map = {key.lower(): value for key, value in TASK_MAPPING.items()}
+
+    # Afrobench-Lite included datasets
+    afrobench_lite_datasets = {"injongointent", "sib", "afrixnli", "belebele", "afrimmlu", "afrimgsm",
+                               "flores - en_xx", "flores - xx_en"}
 
     # Process each CSV file
     for filename in os.listdir(data_dir):
@@ -106,7 +110,7 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
 
             avg_col = "avg" if "avg" in df.columns else "avg_score"
 
-            if leaderboard:
+            if leaderboard == "afrobench":
                 # Initialize leaderboard structure
                 if task not in leaderboard_data:
                     leaderboard_data[task] = {}
@@ -122,6 +126,23 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
                     dataset_scores[model] = round(sum(scores) / len(scores) if scores else None, 1)  # Avoid division by zero
 
                 leaderboard_data[task][subtask]["datasets"][dataset_name] = dataset_scores
+
+            elif leaderboard == "afrobench_lite":
+                # Only process datasets included in Afrobench-Lite
+                if dataset_name in afrobench_lite_datasets:
+                    # Use subtask name as task key (no nested "subtasks" structure)
+                    if subtask not in leaderboard_data:
+                        leaderboard_data[subtask] = {}
+
+                    # Store per-model dataset scores
+                    dataset_scores = {}
+                    for model in models:
+                        best_avg_row = df[df["model"] == model].loc[df[df["model"] == model][avg_col].idxmax()]
+                        scores = [best_avg_row[col] for col in language_columns if col in best_avg_row]
+                        dataset_scores[model] = round(sum(scores) / len(scores) if scores else None,
+                                                      1)  # Avoid division by zero
+
+                    leaderboard_data[subtask][dataset_name] = dataset_scores
 
             else:
                 # Initialize task & subtask structure
@@ -144,7 +165,7 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
 
     # Save leaderboard JSON if enabled
     if leaderboard:
-        output_path = os.path.join(output_dir, leaderboard_name)
+        output_path = os.path.join(output_dir, f"{leaderboard}.json")
         with open(output_path, "w", encoding="utf-8") as json_file:
             json.dump(leaderboard_data, json_file, indent=4)
         print("Leaderboard JSON generated successfully!")
@@ -158,4 +179,4 @@ def generate_json_files(data_dir="datasets", output_dir="leaderboard_json", lead
         print("Task-wise JSON files with subtasks generated successfully!")
 
 
-generate_json_files(leaderboard=True, leaderboard_name="afrobench.json")
+generate_json_files(leaderboard="afrobench_lite")
