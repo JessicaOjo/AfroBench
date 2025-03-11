@@ -169,18 +169,18 @@
         }
 
         // Update leaderboard table dynamically (Handles both views)
-        function updateLeaderboard(view) {
-            const tableBody = document.querySelector(view === "afrobench" ? "#afrobench-table" : "#afrobench_lite-table");
+        function updateLeaderboard() {
+            const tableBody = document.querySelector(currentView === "afrobench" ? "#afrobench-table" : "#afrobench_lite-table");
             tableBody.innerHTML = "";
 
-            let computedScores = computeScores(view);
+            let computedScores = computeScores(currentView);
             computedScores.forEach((entry, index) => {
                 let row = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
                     <td class="border p-3 text-center">${index + 1}</td>
                     <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
                     <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
 
-                let columns = view === "afrobench" 
+                let columns = currentView === "afrobench" 
                     ? ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"]
                     : ["Intent", "Topic", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"];
 
@@ -205,6 +205,7 @@
     
         // Function to switch views
         function switchView(view) {
+            if (currentView === view) return; // Avoid unnecessary re-renders
             currentView = view;
             document.getElementById("afrobench-view").style.display = view === "afrobench" ? "block" : "none";
             document.getElementById("afrobench-lite-view").style.display = view === "afrobench-lite" ? "block" : "none";
