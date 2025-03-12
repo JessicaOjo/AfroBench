@@ -7,8 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function toggleLeaderboard(view) {
+            // Toggle visibility of views
             document.getElementById("afrobench-view").classList.toggle("hidden", view !== 'afrobench');
             document.getElementById("afrobench-lite-view").classList.toggle("hidden", view !== 'afrobench-lite');
+            
+            // Call switchView to update the current view and load appropriate data
+            switchView(view);
         }
     </script>
 </head>
@@ -103,9 +107,13 @@
         // Function to fetch leaderboard data
         async function fetchLeaderboardData() {
             const filePath = currentView === "afrobench-lite" ? "leaderboard_json/afrobench_lite.json" : "leaderboard_json/afrobench.json";
-            const response = await fetch(filePath);
-            leaderboardData = await response.json();
-            updateLeaderboard(); // Render table
+            try {
+                const response = await fetch(filePath);
+                leaderboardData = await response.json();
+                updateLeaderboard(); // Render table
+            } catch (error) {
+                console.error("Error loading leaderboard data:", error);
+            }
         }
     
         // Compute per-model scores dynamically (for both views)
@@ -170,26 +178,50 @@
 
         // Update leaderboard table dynamically (Handles both views)
         function updateLeaderboard() {
-            const tableBody = document.querySelector(currentView === "afrobench" ? "#afrobench-table" : "#afrobench_lite-table");
-            tableBody.innerHTML = "";
+            const tableBody = document.getElementById(currentView === "afrobench" ? "afrobench-table" : "afrobench_lite-table");
+            tableBody.innerHTML = ""; // Clear existing content
 
             let computedScores = computeScores();
+            
+            // Define the columns for each view
+            let columns;
+            if (currentView === "afrobench") {
+                columns = ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "Arc-E", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"];
+            } else { // afrobench-lite
+                columns = ["Intent", "Topic", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"];
+            }
+            
             computedScores.forEach((entry, index) => {
-                let row = `<tr class="border bg-gray-100 hover:bg-gray-200 transition">
-                    <td class="border p-3 text-center">${index + 1}</td>
-                    <td class="border p-3 font-medium text-gray-900">${entry.model}</td>
-                    <td class="border p-3 text-center font-bold text-yellow-600">${entry.overallScore}</td>`;
-
-                let columns = currentView === "afrobench" 
-                    ? ["POS", "NER", "Senti", "Topic", "Intent", "Hate", "NLI", "XQA", "RC", "Arc-E", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)", "SUMM", "ADR"]
-                    : ["Intent", "Topic", "NLI", "RC", "MMLU", "Math", "MT(en/fr-xx)", "MT(xx-en/fr)"];
-
+                let row = document.createElement("tr");
+                row.className = "border bg-gray-100 hover:bg-gray-200 transition";
+                
+                // Create rank cell
+                let rankCell = document.createElement("td");
+                rankCell.className = "border p-3 text-center";
+                rankCell.textContent = index + 1;
+                row.appendChild(rankCell);
+                
+                // Create model name cell
+                let modelCell = document.createElement("td");
+                modelCell.className = "border p-3 font-medium text-gray-900";
+                modelCell.textContent = entry.model;
+                row.appendChild(modelCell);
+                
+                // Create overall score cell
+                let scoreCell = document.createElement("td");
+                scoreCell.className = "border p-3 text-center font-bold text-yellow-600";
+                scoreCell.textContent = entry.overallScore;
+                row.appendChild(scoreCell);
+                
+                // Create cells for each metric
                 columns.forEach((task) => {
-                    row += `<td class="border p-3 text-center">${entry.scores[task] || "-"}</td>`;
+                    let cell = document.createElement("td");
+                    cell.className = "border p-3 text-center";
+                    cell.textContent = entry.scores[task] || "-";
+                    row.appendChild(cell);
                 });
-
-                row += "</tr>";
-                tableBody.innerHTML += row;
+                
+                tableBody.appendChild(row);
             });
         }
     
@@ -207,8 +239,6 @@
         function switchView(view) {
             if (currentView === view) return; // Avoid unnecessary re-renders
             currentView = view;
-            document.getElementById("afrobench-view").style.display = view === "afrobench" ? "block" : "none";
-            document.getElementById("afrobench-lite-view").style.display = view === "afrobench-lite" ? "block" : "none";
             fetchLeaderboardData();
         }
     
