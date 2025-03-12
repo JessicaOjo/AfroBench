@@ -90,29 +90,27 @@
 
     <section class="mt-12 text-left max-w-5xl mx-auto">
         <h2 class="text-3xl font-bold">AfroBench-LITE Evaluation</h2>
-        <div class="text-gray-700 mt-2">
-            <p>
-                AFROBENCH-LITE is a streamlined version of AFROBENCH, designed for comprehensive LLM evaluation under compute constraints. 
-                It establishes baselines across 7 datasets and 14 African languages, ensuring broad NLP coverage while maintaining language consistency. 
-                Below, we compare AFROBENCH-LITE scores with the monolingual data size of each language based on MADLAD.
-            </p>
-        </div>
+        <p class="text-gray-700 mt-2">
+            AFROBENCH-LITE is a streamlined version of AFROBENCH, designed for comprehensive LLM evaluation under compute constraints. 
+            It establishes baselines across 7 datasets and 14 African languages, ensuring broad NLP coverage while maintaining language consistency.
+        </p>
     
-        <!-- Leaderboard image to the right -->
-        <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4 mt-6">
-            <div class="md:w-3/5">
-                <img src="assets/afrobench-lite.png" alt="AfroBench Lite" class="max-w-full shadow-lg rounded-lg">
-            </div>
-            <div class="md:w-2/5 flex justify-center">
+        <!-- Two-column layout with flexible sizing -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div>
                 <img src="assets/afrobench_leaderboard.png" alt="AfroBench Leaderboard" class="max-w-full shadow-lg rounded-lg">
             </div>
+            <div>
+                <img src="assets/afrobench_leaderboard_scatter.png" alt="AfroBench Scatter Plot" class="max-w-full shadow-lg rounded-lg">
+            </div>
         </div>
-
-        <!-- AfroBench-lang performance image moved below the text -->
-        <div class="flex justify-center mt-6">
+    
+        <!-- Full-width language performance image -->
+        <div class="mt-6">
             <img src="assets/afrobench-lang-perf.png" alt="AfroBench Language Performance" class="max-w-full shadow-lg rounded-lg">
         </div>
     </section>
+    
 
     <!-- Insights & Findings -->
     <section class="mt-12 max-w-5xl mx-auto text-left">
